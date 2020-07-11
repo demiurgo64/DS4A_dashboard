@@ -14,7 +14,7 @@ from sqlalchemy import create_engine
 # -----------------
 # DB connection
 user = 'postgres'
-password = '210818'
+password = 'postgres'
 host = 'localhost'
 database = 'icfes'
 
