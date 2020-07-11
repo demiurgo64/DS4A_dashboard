@@ -63,5 +63,5 @@ prueba,
 tipo_prueba				
 --estu_snies_prgmacademico TEXT, --INTEGER 
 )
-FROM 'E:\\archive\\2020\\cursos\\correlation_one\\proyecto\\app_local\\db\\data-final-depurado-fecha.csv' 
+FROM '/home/ubuntu/data/data-final-depurado-fecha.csv' 
 DELIMITER ',' CSV HEADER;

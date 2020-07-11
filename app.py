@@ -6,8 +6,12 @@ import plotly.express as px
 
 import pandas as pd
 import json
+import os
 
-df = pd.read_csv('data/data-final-depurado-fecha.csv')
+base_dir = os.path.dirname(__file__)
+file_path = os.path.join(base_dir, 'data', 'data-final-depurado-fecha.csv')
+df = pd.read_csv(file_path)
+
 df.fillna(value={'FAMI_ESTRATOVIVIENDA':'-'}, inplace=True)
 array=[str(x)[:4] for x in df['PERIODO-X'].values]
 df['YEAR']=[int(x) for x in array]
@@ -16,7 +20,8 @@ avalaible_test=df.PRUEBA.unique()
 
 avalaible_module=["MOD_COMUNI_ESCRITA_PUNT","MOD_COMPETEN_CIUDADA_PUNT","MOD_LECTURA_CRITICA_PUNT","MOD_RAZONA_CUANTITAT_PUNT","MOD_INGLES_PUNT"]
 
-with open('data/colombiaID.geo.json') as json_file:
+json_path = os.path.join(base_dir, 'data', 'colombiaID.geo.json')
+with open(json_path) as json_file:
     deparments = json.load(json_file)
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -32,7 +37,7 @@ app.layout = html.Div([
         dcc.Dropdown(
             id='filter-test',
             options=[{'label': i, 'value': i} for i in avalaible_test],
-            value='SaberPro'
+            value=avalaible_test[0]
         )
     ]),
 
@@ -46,7 +51,6 @@ app.layout = html.Div([
         )
     ]),    
 
-    dcc.Graph(id='graph-with-slider'),
     html.Div([
     dcc.Slider(
         id='year-slider',
@@ -62,15 +66,45 @@ app.layout = html.Div([
 ])
 
 
+# Slider callback
+@app.callback(
+    [Output('year-slider', 'min'),
+    Output('year-slider', 'max'),
+    Output('year-slider', 'value'),
+    Output('year-slider', 'marks')],
+    [Input('filter-test', 'value')])
+def update_slider(selected_test):
+    filtered_df = df[(df.PRUEBA == selected_test)]
+    miny = filtered_df['PERIODO'].min()
+    maxy = filtered_df['PERIODO'].max()
+    marks= {str(year): str(year) for year in filtered_df['PERIODO'].unique()}
+
+    return miny, maxy, miny, marks
+
+# Box Plot Callback
 @app.callback(
     Output('graph-with-slider', 'figure'),
     [Input('filter-test', 'value'),
     Input('year-slider', 'value'),
     Input('yaxis-column', 'value')])
 def update_figure(selected_test,selected_year, selected_mod):
-    filtered_df = df[(df['YEAR'] == selected_year) & (df.PRUEBA == selected_test)]
-    estratos={'FAMI_ESTRATOVIVIENDA':['Estrato 0', 'Estrato 1', 'Estrato 2', 'Estrato 3', 'Estrato 4', 'Estrato 5','Estrato 6', 'Sin Estrato', 'Zona Rural', '-']}
-    fig = px.box(filtered_df, x="FAMI_ESTRATOVIVIENDA", y=selected_mod, color="FAMI_ESTRATOVIVIENDA", category_orders=estratos)
+    filtered_df = df[(df.PERIODO == selected_year) & (df.PRUEBA == selected_test)]
+    filtered_df = filtered_df.dropna(subset=["FAMI_ESTRATOVIVIENDA"]) 
+
+    categories = [
+        "Estrato 0",
+        "Estrato 1",
+        "Estrato 2",
+        "Estrato 3",
+        "Estrato 4",
+        "Estrato 5",
+        "Estrato 6",
+        "Sin Estrato",
+        "Zona Rural"
+    ]
+
+    fig = px.box(filtered_df, x="FAMI_ESTRATOVIVIENDA", y=selected_mod, color="FAMI_ESTRATOVIVIENDA",
+                category_orders={"FAMI_ESTRATOVIVIENDA": categories})
 
     fig.update_layout(transition_duration=2)
 
@@ -78,7 +112,7 @@ def update_figure(selected_test,selected_year, selected_mod):
 
     return fig
 
-
+# Map Callback
 @app.callback(
     Output('map', 'figure'),
     [Input('filter-test', 'value'),
