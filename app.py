@@ -33,6 +33,7 @@ with open(json_path) as json_file:
 # Flask app
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app.title = "Saber Pro and TyT"
 
 
 # -----------------
@@ -111,9 +112,14 @@ app.layout = html.Div([
         )
     ]),
 
-    dcc.Graph(id='graph-with-slider'),
-    
-    dcc.Graph(id='map')
+    html.Div([
+        dcc.Graph(id='graph-with-slider'),
+        dcc.Graph(id='map')
+    ]),
+
+    html.Div(
+        id = "loading-chart"
+    )
 ])
 
 
