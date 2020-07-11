@@ -10,6 +10,12 @@ $$
 $$ LANGUAGE SQL IMMUTABLE;
 
 
+-- año
+ALTER TABLE datafinaldepurado DROP COLUMN year;
+ALTER TABLE datafinaldepurado ADD COLUMN year INTEGER;
+UPDATE datafinaldepurado SET year = (LEFT(periodo::TEXT, 4))::INTEGER;
+
+
 -- prueba
 DROP TABLE IF EXISTS dim_prueba;
 CREATE TABLE dim_prueba AS
@@ -20,21 +26,19 @@ FROM datafinaldepurado;
 -- modulo
 DROP TABLE IF EXISTS dim_modulo;
 CREATE TABLE dim_modulo (modulo TEXT);
-INSERT INTO dim_modulo VALUES (
-    "mod_comuni_escrita_punt",
-    "mod_competen_ciudada_punt",
-    "mod_lectura_critica_punt",
-    "mod_razona_cuantitat_punt",
-    "mod_ingles_punt"
-);
+INSERT INTO dim_modulo VALUES ('mod_comuni_escrita_punt');
+INSERT INTO dim_modulo VALUES ('mod_competen_ciudada_punt');
+INSERT INTO dim_modulo VALUES ('mod_lectura_critica_punt');
+INSERT INTO dim_modulo VALUES ('mod_razona_cuantitat_punt');
+INSERT INTO dim_modulo VALUES ('mod_ingles_punt');
 
 
 -- periodo
 DROP TABLE IF EXISTS dim_periodo;
 CREATE TABLE dim_periodo AS
-SELECT DISTINCT prueba, periodo
+SELECT DISTINCT prueba, year
 FROM datafinaldepurado
-ORDER BY prueba, periodo;
+ORDER BY prueba, year;
 
 
 -- ESTU_PRGM_DEPARTAMENTO
@@ -42,7 +46,7 @@ DROP TABLE IF EXISTS fact_estu_prgm_departamento;
 CREATE TABLE fact_estu_prgm_departamento AS
 SELECT 
   prueba, 
-  periodo,
+  year,
   estu_prgm_departamento,
   AVG(mod_comuni_escrita_punt) AS mod_comuni_escrita_punt,
   AVG(mod_competen_ciudada_punt) AS mod_competen_ciudada_punt,
@@ -50,5 +54,5 @@ SELECT
   AVG(mod_razona_cuantitat_punt) AS mod_razona_cuantitat_punt,
   AVG(mod_ingles_punt) AS mod_ingles_punt
 FROM datafinaldepurado
-GROUP BY prueba, periodo, estu_prgm_departamento;
+GROUP BY prueba, year, estu_prgm_departamento;
 
