@@ -2,6 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+#import flask
 import plotly.express as px
 
 import pandas as pd
@@ -35,9 +36,14 @@ max_periodo=max_periodo.loc[0,'max']
 periodos=pd.read_sql_query('select distinct periodo from datafinaldepurado',con=engine)
 periodos=periodos['periodo']
 
+
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
+#server = flask.Flask(__name__, ) # defines app.server
+
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
+
 
 app.layout = html.Div([
     
