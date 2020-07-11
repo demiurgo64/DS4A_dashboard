@@ -8,18 +8,36 @@ import pandas as pd
 
 df = pd.read_csv('data/data-final.csv')
 
-available_test=["MOD_COMUNI_ESCRITA_PUNT","MOD_COMPETEN_CIUDADA_PUNT","MOD_LECTURA_CRITICA_PUNT","MOD_RAZONA_CUANTITAT_PUNT","MOD_INGLES_PUNT"]
+avalaible_test=df.PRUEBA.unique()
+
+avalaible_module=["MOD_COMUNI_ESCRITA_PUNT","MOD_COMPETEN_CIUDADA_PUNT","MOD_LECTURA_CRITICA_PUNT","MOD_RAZONA_CUANTITAT_PUNT","MOD_INGLES_PUNT"]
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div([
+    
+    html.H1("ICFES Test Dashboard", style={'text-align':'center'}, id='Title'),
+
+    html.Div([
+        html.Label('Test'),
+        dcc.Dropdown(
+            id='filter-test',
+            options=[{'label': i, 'value': i} for i in avalaible_test],
+            value='SaberPro'
+        )
+    ]),
+
+
+    html.Div([
+        html.Label('Module'),
         dcc.Dropdown(
             id='yaxis-column',
-            options=[{'label': i, 'value': i} for i in available_test],
-            value="MOD_INGLES_PUNT"
-        ),
+            options=[{'label': i, 'value': i} for i in avalaible_module],
+            value="MOD_COMUNI_ESCRITA_PUNT"
+        )
+    ]),    
 
     dcc.Graph(id='graph-with-slider'),
     dcc.Slider(
@@ -35,20 +53,19 @@ app.layout = html.Div([
 
 @app.callback(
     Output('graph-with-slider', 'figure'),
-    [Input('year-slider', 'value'),
+    [Input('filter-test', 'value'),
+    Input('year-slider', 'value'),
     Input('yaxis-column', 'value')])
-def update_figure(selected_year, punt):
-    filtered_df = df[df.PERIODO == selected_year]
+def update_figure(selected_test,selected_year, selected_mod):
+    filtered_df = df[(df.PERIODO == selected_year) & (df.PRUEBA == selected_test)]
 
-    fig = px.box(filtered_df, x="FAMI_ESTRATOVIVIENDA", y=punt, color="FAMI_ESTRATOVIVIENDA")
+    fig = px.box(filtered_df, x="FAMI_ESTRATOVIVIENDA", y=selected_mod, color="FAMI_ESTRATOVIVIENDA")
 
-    fig.update_layout(transition_duration=5)
+    fig.update_layout(transition_duration=2)
 
-    fig.update_yaxes(title=punt) 
-
+    fig.update_yaxes(title=selected_mod) 
 
     return fig
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
