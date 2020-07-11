@@ -1,0 +1,4 @@
+createdb -O postgres -U postgres icfes
+
+#pwd postgres
+
