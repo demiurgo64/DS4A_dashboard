@@ -34,7 +34,7 @@ with open(json_path) as json_file:
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = "Saber Pro and TyT"
-
+server = app.server
 
 # -----------------
 # Constants
