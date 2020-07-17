@@ -18,14 +18,14 @@ password = 'postgres'
 host = 'localhost'
 database = 'icfes'
 
-engine = create_engine('postgresql://{0}:{1}@{2}:5432/{3}'.format(user, password, host, database))
+engine = create_engine('postgresql://{0}:{1}@{2}:5432/{3}'.format(user, password, host, database), encoding='utf8')
 
 
 # -----------------
 # Read geoJSON
 base_dir = os.path.dirname(__file__)
 json_path = os.path.join(base_dir, 'data', 'colombiaID.geo.json')
-with open(json_path) as json_file:
+with open(json_path, encoding='utf-8') as json_file:
     departamentos = json.load(json_file)
 
 
@@ -48,7 +48,7 @@ available_test = [
 # Modulo
 available_module = [
     "mod_comuni_escrita_punt",
-    "mod_competen_ciudad_punt",
+    "mod_competen_ciudada_punt",
     "mod_lectura_critica_punt",
     "mod_razona_cuantitat_punt",
     "mod_ingles_punt"
@@ -77,16 +77,16 @@ available_estrato = [
 
 # Factores
 available_factor = [
-    'estu_nucleo_pregrado',
     'estu_prgm_departamento',
-    'estu_genero',
-    'fami_estratovivienda',
-    'inst_caracter_academico',
     'estu_metodo_prgm',
+    'inst_caracter_academico',
     'inst_origen',
+    'estu_nucleo_pregrado',
     'estu_valormatriculauniversidad',
+    'estu_genero',
+    'estu_horassemanatrabaja',
     'estu_simulacrotipoicfes',
-    'estu_horassemanatrabaja'
+    'fami_estratovivienda'
 ]
 
 # Género
@@ -164,6 +164,48 @@ presentation_order = {
 
 
 # -----------------
+# Name Mappings
+
+presentation_column_names = {
+    'estu_nucleo_pregrado': 'Programa: Núcleo de conocimiento',
+    'estu_prgm_departamento': 'Institución: Departamento geográfico',
+    'estu_genero': 'Personal: Género',
+    'fami_estratovivienda': 'Socioeconómico: Estrato',
+    'inst_caracter_academico': 'Institución: Nivel',
+    'estu_metodo_prgm': 'Institución: Metodología',
+    'inst_origen': 'Institución: Régimen',
+    'estu_valormatriculauniversidad': 'Programa: Valor Matrícula',
+    'estu_simulacrotipoicfes': 'Personal: Preparación de prueba con simulacro',
+    'estu_horassemanatrabaja': 'Personal: Horas que trabaja por semana'
+}
+
+presentation_column_short_names = {
+    'estu_nucleo_pregrado': 'Núcleo de conocimiento',
+    'estu_prgm_departamento': 'Departamento geográfico',
+    'estu_genero': 'Género',
+    'fami_estratovivienda': 'Estrato',
+    'inst_caracter_academico': 'Nivel',
+    'estu_metodo_prgm': 'Metodología',
+    'inst_origen': 'Régimen',
+    'estu_valormatriculauniversidad': 'Valor Matrícula',
+    'estu_simulacrotipoicfes': 'Preparación de prueba con simulacro',
+    'estu_horassemanatrabaja': 'Horas que trabaja por semana'
+}
+
+presentation_test = {
+    "SaberPro": "Saber Pro",
+    "SaberTyT": "Saber TyT"
+}
+
+presentation_module = {
+    "mod_comuni_escrita_punt": "Comunicación Escrita",
+    "mod_competen_ciudada_punt": "Competencias Ciudadanas",
+    "mod_lectura_critica_punt": "Lectura Crítica",
+    "mod_razona_cuantitat_punt": "Razonamiento Cuantitativo",
+    "mod_ingles_punt": "Inglés"
+}
+
+# -----------------
 # Tabs Styles
 
 tabs_styles = {
@@ -211,36 +253,49 @@ app.layout = html.Div([
                 # Filter box
                 html.Div([
 
-                    html.Label('Test'),
-                    dcc.Dropdown(
-                        id='test-dropdown',
-                        options=[{'label': i.upper(), 'value': i} for i in available_test],
-                        value=available_test[0]
-                    ),
+                    html.Div([
+                        html.Label('Test'),
+                        dcc.Dropdown(
+                            id='test-dropdown',
+                            options=[{'label': presentation_test[i], 'value': i} for i in available_test],
+                            value=available_test[1]
+                        )
+                    ],
+                    className="mini_filter"),
 
-                    html.Label('Module'),
-                    dcc.Dropdown(
-                        id='module-dropdown',
-                        options=[{'label': i.upper(), 'value': i} for i in available_module],
-                        value="mod_comuni_escrita_punt"
-                    ),
+                    html.Div([
+                        html.Label('Module'),
+                        dcc.Dropdown(
+                            id='module-dropdown',
+                            options=[{'label': presentation_module[i], 'value': i} for i in available_module],
+                            value=available_module[0]
+                        )
+                    ],
+                    className="mini_filter"),
 
-                    html.Label('Factor'),
-                    dcc.Dropdown(
-                        id='factor-dropdown',
-                        options=[{'label': i.upper(), 'value': i} for i in available_factor],
-                        value="estu_genero"
-                    ),
+                    html.Div([
+                        html.Label('Factor'),
+                        dcc.Dropdown(
+                            id='factor-dropdown',
+                            options=[{'label': presentation_column_names[i], 'value': i} for i in available_factor],
+                            value="estu_prgm_departamento"
+                        )
+                    ],
+                    className="mini_filter"),
 
-                    html.Label('Year'),
-                    dcc.Slider(
-                        id='year-slider',
-                        min=2016,
-                        max=2019,
-                        value=2016,
-                        marks={str(year): str(year) for year in available_year},
-                        step=None
-                    )
+                    html.Div([
+                        html.Label('Year'),
+                        html.Br(),
+                        dcc.Slider(
+                            id='year-slider',
+                            min=2016,
+                            max=2019,
+                            value=2016,
+                            marks={str(year): str(year) for year in available_year},
+                            step=None
+                        )
+                    ],
+                    className="mini_filter")
 
                 ],
                 className="pretty_container four columns",
@@ -323,8 +378,8 @@ def get_box_plot(selected_test,selected_year, selected_mod, selected_factor):
         )
     )
 
-    fig.update_xaxes(showticklabels=False)
-    fig.update_yaxes(title=selected_mod) 
+    fig.update_xaxes(showticklabels=False, title=presentation_column_short_names[selected_factor])
+    fig.update_yaxes(title=presentation_module[selected_mod]) 
 
     return fig
 
@@ -342,7 +397,7 @@ def get_map(selected_test,selected_year, selected_mod):
     fig = px.choropleth_mapbox(map_df, geojson=departamentos, locations='estu_prgm_departamento', 
                                color=selected_mod, color_continuous_scale="Viridis",
                                center={'lat':4.6683288,'lon':-74.1350578}, mapbox_style="carto-positron", 
-                               zoom=4)
+                               zoom=4, labels=dict(presentation_module, **presentation_column_short_names))
 
     fig.update_layout(title="Colombia",margin={"r":0,"t":0,"l":0,"b":0}, paper_bgcolor="#F8F9F9", plot_bgcolor="#F8F9F9")
     return fig
