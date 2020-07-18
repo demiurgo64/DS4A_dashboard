@@ -13,7 +13,7 @@ import joblib
 from sqlalchemy import create_engine
 
 from data.texts import section_1_title, section_1_p_1, section_1_p_2
-from model.categories import *
+from model.categories import get_feature_vector
 
 # -----------------
 # DB connection
