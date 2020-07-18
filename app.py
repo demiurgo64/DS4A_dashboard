@@ -4,12 +4,16 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.express as px
 
+import base64
 import pandas as pd
 import json
 import os
 
+import joblib
 from sqlalchemy import create_engine
 
+from data.texts import section_1_title, section_1_p_1, section_1_p_2
+from model.categories import *
 
 # -----------------
 # DB connection
@@ -27,6 +31,12 @@ base_dir = os.path.dirname(__file__)
 json_path = os.path.join(base_dir, 'data', 'colombiaID.geo.json')
 with open(json_path, encoding='utf-8') as json_file:
     departamentos = json.load(json_file)
+
+
+# -----------------
+# Model
+model_path = os.path.join(base_dir, 'model', 'model-random-forest1.joblib')
+razona_punt_model = joblib.load(model_path)
 
 
 # -----------------
@@ -186,6 +196,26 @@ available_dpto = [
     "VICHADA"
 ]
 
+# Nucleo
+available_area = ['ADMINISTRACIÓN', 'AGRONOMÍA', 'ANTROPOLOGÍA, ARTES LIBERALES', 
+    'ARQUITECTURA', 'ARTES PLÁSTICAS, VISUALES Y AFINES', 'ARTES REPRESENTATIVAS', 
+    'BACTERIOLOGÍA', 'BIBLIOTECOLOGÍA, OTROS DE CIENCIAS SOCIALES Y HUMANAS', 
+    'BIOLOGÍA, MICROBIOLOGÍA Y AFINES', 'CIENCIAS POLÍTICAS, RELACIONES INTERNACIONALES', 
+    'COMUNICACIÓN SOCIAL, PERIODISMO Y AFINES', 'CONTADURÍA PUBLICA', 
+    'DEPORTES, EDUCACIÓN FÍSICA Y RECREACIÓN', 'DERECHO Y AFINES', 'DISEÑO', 
+    'ECONOMÍA', 'EDUCACIÓN', 'ENFERMERÍA', 'FILOSOFÍA, TEOLOGÍA Y AFINES', 
+    'FORMACIÓN RELACIONADA CON EL CAMPO MILITAR O POLICIAL', 'FÍSICA', 'GEOGRAFÍA, HISTORIA', 
+    'GEOLOGÍA, OTROS PROGRAMAS DE CIENCIAS NATURALES', 'INGENIERÍA ADMINISTRATIVA Y AFINES', 
+    'INGENIERÍA AGROINDUSTRIAL, ALIMENTOS Y AFINES', 'INGENIERÍA AGRONÓMICA, PECUARIA Y AFINES', 
+    'INGENIERÍA AGRÍCOLA, FORESTAL Y AFINES', 'INGENIERÍA AMBIENTAL, SANITARIA Y AFINES', 
+    'INGENIERÍA BIOMÉDICA Y AFINES', 'INGENIERÍA CIVIL Y AFINES', 'INGENIERÍA DE MINAS, METALURGIA Y AFINES', 
+    'INGENIERÍA DE SISTEMAS, TELEMÁTICA Y AFINES', 'INGENIERÍA ELECTRÓNICA, TELECOMUNICACIONES Y AFINES', 
+    'INGENIERÍA ELÉCTRICA Y AFINES', 'INGENIERÍA INDUSTRIAL Y AFINES', 'INGENIERÍA MECÁNICA Y AFINES', 
+    'INGENIERÍA QUÍMICA Y AFINES', 'INSTRUMENTACIÓN QUIRÚRGICA', 'LENGUAS MODERNAS, LITERATURA, LINGÜÍSTICA Y AFINES', 
+    'MATEMÁTICAS, ESTADÍSTICA Y AFINES', 'MEDICINA', 'MEDICINA VETERINARIA', 'MÚSICA', 'NORMALES SUPERIORES', 
+    'NUTRICIÓN Y DIETÉTICA', 'ODONTOLOGÍA', 'OPTOMETRÍA, OTROS PROGRAMAS DE CIENCIAS DE LA SALUD', 
+    'OTRAS INGENIERÍAS', 'OTROS PROGRAMAS ASOCIADOS A BELLAS ARTES', 'PSICOLOGÍA', 'PUBLICIDAD Y AFINES', 
+    'QUÍMICA Y AFINES', 'SALUD PÚBLICA', 'SOCIOLOGÍA, TRABAJO SOCIAL Y AFINES', 'TERAPIAS', 'ZOOTECNIA']
 
 # Presentation Order
 presentation_order = {
@@ -278,6 +308,12 @@ app.layout = html.Div([
     # Tabs
     dcc.Tabs([
         dcc.Tab(label=' Project Overview', children=[
+
+            html.Br(),
+            html.Img(src=app.get_asset_url('student-test.jpg'), width='100%')
+            #html.H2(section_1_title),
+            #html.P(section_1_p_1),
+            #html.P(section_1_p_2),
             
         ],
         style=tab_style,
@@ -387,7 +423,7 @@ app.layout = html.Div([
                             dcc.Dropdown(
                                 id='test-dropdown-form',
                                 options=[{'label': presentation_test[i], 'value': i} for i in available_test],
-                                value=None
+                                value=available_test[0]
                             )
                         ],
                         className="mini_filter right-column auto_width flex-1"),
@@ -397,7 +433,7 @@ app.layout = html.Div([
                             dcc.Dropdown(
                                 id='departament-dropdown-form',
                                 options=[{'label': i.title(), 'value': i} for i in available_dpto],
-                                value=None
+                                value=available_dpto[3]
                             )
                         ],
                         className="mini_filter right-column auto_width flex-1")
@@ -413,7 +449,7 @@ app.layout = html.Div([
                             dcc.Dropdown(
                                 id='gender-dropdown-form',
                                 options=[{'label': i.title(), 'value': i} for i in available_gender],
-                                value=None
+                                value=available_gender[0]
                             ),
                         ],
                         className="mini_filter right-column auto_width flex-1"),
@@ -423,7 +459,7 @@ app.layout = html.Div([
                             dcc.Dropdown(
                                 id='stratum-dropdown-form',
                                 options=[{'label': i.title(), 'value': i} for i in available_estrato],
-                                value=None
+                                value=available_estrato[2]
                             )
                         ],
                         className="mini_filter right-column auto_width flex-1")
@@ -437,7 +473,7 @@ app.layout = html.Div([
                         dcc.Dropdown(
                             id='inst-type-dropdown-form',
                             options=[{'label': i.title(), 'value': i} for i in available_inst_type],
-                            value=None
+                            value=available_inst_type[3]
                         )
                     ],
                     className="mini_filter"),
@@ -446,8 +482,8 @@ app.layout = html.Div([
                         html.Label('Knowledge Area'),
                         dcc.Dropdown(
                             id='area-dropdown-form',
-                            options=[{'label': i.title(), 'value': i} for i in ['']],
-                            value=None
+                            options=[{'label': i.title(), 'value': i} for i in available_area],
+                            value=available_area[39]
                         )
                     ],
                     className="mini_filter"),
@@ -457,7 +493,7 @@ app.layout = html.Div([
                         dcc.Dropdown(
                             id='inst-tuition-dropdown-form',
                             options=[{'label': i, 'value': i} for i in available_tuition_cost],
-                            value=None
+                            value=available_tuition_cost[3]
                         )
                     ],
                     className="mini_filter"),
@@ -465,11 +501,11 @@ app.layout = html.Div([
                     html.Div([
 
                         html.Div([
-                            html.Label('Education Method'),
+                            html.Label('Scholarship'),
                             dcc.Dropdown(
-                                id='inst-method-dropdown-form',
-                                options=[{'label': i.title(), 'value': i} for i in available_method],
-                                value=None
+                                id='scholarship-dropdown-form',
+                                options=[{'label': i.title(), 'value': i} for i in available_yes_no],
+                                value=available_yes_no[0]
                             )
                         ],
                         className="mini_filter right-column auto_width flex-1"),
@@ -479,7 +515,7 @@ app.layout = html.Div([
                             dcc.Dropdown(
                                 id='inst-level-dropdown-form',
                                 options=[{'label': i.title(), 'value': i} for i in available_inst_level],
-                                value=None
+                                value=available_inst_level[0]
                             )
                         ],
                         className="mini_filter right-column auto_width flex-1")
@@ -533,6 +569,7 @@ app.layout = html.Div([
     ),
     
 ])
+
 
 
 # -----------------
@@ -619,23 +656,44 @@ def update_figure(selected_test,selected_year, selected_mod, selected_factor):
 @app.callback(
     Output('graph-with-prediction', 'figure'),
     [Input('test-dropdown-form', 'value'),
-    Input('departament-dropdown-form', 'value')])
-def update_figure(selected_test, selected_dpto):
-    df = pd.DataFrame(dict(
-        punt=[150, 150, 150, 150, 180],
+    Input('departament-dropdown-form', 'value'),
+    Input('gender-dropdown-form', 'value'),
+    Input('stratum-dropdown-form', 'value'),
+    Input('inst-type-dropdown-form', 'value'),
+    Input('area-dropdown-form', 'value'),
+    Input('inst-tuition-dropdown-form', 'value'),
+    Input('scholarship-dropdown-form', 'value'),
+    Input('inst-level-dropdown-form', 'value')])
+def update_figure(selected_test, selected_dpto, selected_gender, selected_stratum, selected_inst_type, 
+                    selected_area, selected_tuition, has_scholarship, selected_level):
+
+    # Get feature cat coded vector
+    feature_vector = get_feature_vector(selected_dpto, selected_gender, selected_stratum, selected_inst_type, 
+                    selected_area, selected_tuition, has_scholarship, selected_level)
+
+    comuni_punt = 150
+    comp_punt = 150
+    lect_punt = 150
+    razona_punt = round(razona_punt_model.predict([feature_vector])[0], 0)
+    ingles_punt = 180
+
+    polar_df = pd.DataFrame(dict(
+        punt=[comuni_punt, comp_punt, lect_punt, razona_punt, ingles_punt],
         module=available_module))
     
-    df['module_name'] = df['module'].map(presentation_module)
+    polar_df['module_name'] = polar_df['module'].map(presentation_module)
 
-    fig = px.line_polar(df, r='punt', theta='module_name', line_close=True,
-                        labels={'punt': 'Score', 'module_name': 'Module'})
+    fig = px.line_polar(polar_df, r='punt', theta='module_name', line_close=True,
+                        labels={'punt': 'Score', 'module_name': 'Module'}, text='punt')
+
+    fig.update_traces(textposition='top right')
 
     fig.update_layout(
         polar = dict(
             radialaxis = dict(
                 range=[0, 300], 
                 showticklabels=True,
-                dtick=75
+                dtick=100
             )
         )
     )
