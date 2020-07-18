@@ -141,13 +141,51 @@ available_inst_type = [
 ]
 
 # Caracter Institución
-available_inst_class = [
+available_inst_level = [
     'UNIVERSIDAD',
     'INSTITUCIÓN UNIVERSITARIA',
     'INSTITUCIÓN TECNOLÓGICA',
     'TÉCNICA PROFESIONAL',
     'ESCUELA NORMAL SUPERIOR'
 ]
+
+# Departamento
+available_dpto = [
+    "AMAZONAS",
+    "ANTIOQUIA",
+    "ARAUCA",
+    "ATLANTICO",
+    "BOGOTA",
+    "BOLIVAR",
+    "BOYACA",
+    "CALDAS",
+    "CAQUETA",
+    "CASANARE",
+    "CAUCA",
+    "CESAR",
+    "CHOCO",
+    "CORDOBA",
+    "CUNDINAMARCA",
+    "GUAINIA",
+    "GUAVIARE",
+    "HUILA",
+    "LA GUAJIRA",
+    "MAGDALENA",
+    "META",
+    "NARIÑO",
+    "NORTE SANTANDER",
+    "PUTUMAYO",
+    "QUINDIO",
+    "RISARALDA",
+    "SAN ANDRES",
+    "SANTANDER",
+    "SUCRE",
+    "TOLIMA",
+    "VALLE",
+    "VAUPES",
+    "VICHADA"
+]
+
 
 # Presentation Order
 presentation_order = {
@@ -157,7 +195,7 @@ presentation_order = {
     'estu_simulacrotipoicfes': available_yes_no,
     'estu_metodo_prgm': available_method,
     'inst_origen': available_inst_type,
-    'inst_caracter_academico': available_inst_class,
+    'inst_caracter_academico': available_inst_level,
     'estu_valormatriculauniversidad': available_tuition_cost
     #'estu_nucleo_pregrado': [],
 }
@@ -311,12 +349,12 @@ app.layout = html.Div([
                     className="pretty_container"),
 
                 ],
-                id="right-column",
-                className="eight columns"
+                id="factor-graph-container",
+                className="eight columns right-column"
                 )
             
             ],
-            className="row flex-display"
+            className="row flex-display multi_filter"
             ),
 
             # # Row for another graph
@@ -333,7 +371,137 @@ app.layout = html.Div([
         selected_style=tab_selected_style
         ),
 
-        dcc.Tab(label='Predict your results', children=[],
+        dcc.Tab(label='Predict your results', children=[
+
+            # Row with form and predicition
+            html.Div([
+                # Form box
+                html.Div([
+
+                        html.Div([
+
+                            html.Div([
+                            html.Label('Test'),
+                            dcc.Dropdown(
+                                id='test-dropdown-form',
+                                options=[{'label': presentation_test[i], 'value': i} for i in available_test],
+                                value=None
+                            )
+                        ],
+                        className="mini_filter right-column auto_width flex-1"),
+
+                        html.Div([
+                            html.Label('Departament'),
+                            dcc.Dropdown(
+                                id='departament-dropdown-form',
+                                options=[{'label': i.title(), 'value': i} for i in available_dpto],
+                                value=None
+                            )
+                        ],
+                        className="mini_filter right-column auto_width flex-1")
+                    
+                    ],
+                    className="row flex-display"
+                    ),
+
+                    html.Div([
+
+                        html.Div([
+                            html.Label('Gender'),
+                            dcc.Dropdown(
+                                id='gender-dropdown-form',
+                                options=[{'label': i.title(), 'value': i} for i in available_gender],
+                                value=None
+                            ),
+                        ],
+                        className="mini_filter right-column auto_width flex-1"),
+
+                        html.Div([
+                            html.Label('Stratum'),
+                            dcc.Dropdown(
+                                id='stratum-dropdown-form',
+                                options=[{'label': i.title(), 'value': i} for i in available_estrato],
+                                value=None
+                            )
+                        ],
+                        className="mini_filter right-column auto_width flex-1")
+                    
+                    ],
+                    className="row flex-display"
+                    ),
+
+                    html.Div([
+                        html.Label('Institution Type'),
+                        dcc.Dropdown(
+                            id='inst-type-dropdown-form',
+                            options=[{'label': i.title(), 'value': i} for i in available_inst_type],
+                            value=None
+                        )
+                    ],
+                    className="mini_filter"),
+
+                    html.Div([
+                        html.Label('Institution Level'),
+                        dcc.Dropdown(
+                            id='inst-level-dropdown-form',
+                            options=[{'label': i.title(), 'value': i} for i in available_inst_level],
+                            value=None
+                        )
+                    ],
+                    className="mini_filter"),
+
+                    html.Div([
+                        html.Label('Tuition cost'),
+                        dcc.Dropdown(
+                            id='inst-tuition-dropdown-form',
+                            options=[{'label': i, 'value': i} for i in available_tuition_cost],
+                            value=None
+                        )
+                    ],
+                    className="mini_filter"),
+
+                    html.Div([
+                        html.Label('Education Method'),
+                        dcc.Dropdown(
+                            id='inst-method-dropdown-form',
+                            options=[{'label': i.title(), 'value': i} for i in available_method],
+                            value=None
+                        )
+                    ],
+                    className="mini_filter")
+
+                ],
+                className="pretty_container four columns",
+                id="factors-form"
+                ),
+
+                # Graphs
+                html.Div([
+
+                    html.Div([
+                        dcc.Graph(id='graph-with-prediction')
+                    ],
+                    className="pretty_container"),
+
+                ],
+                id="prediction-container",
+                className="eight columns right-column"
+                )
+            
+            ],
+            className="row flex-display"
+            ),
+
+            # # Row for another graph
+            # html.Div([
+            #     #
+            #     html.Div([
+            #         dcc.Graph(id='another-graph')
+            #     ])
+            # ],
+            # className="pretty_container"),
+
+        ],
         style=tab_style,
         selected_style=tab_selected_style
         ),
@@ -427,6 +595,34 @@ def update_figure(selected_test,selected_year, selected_mod, selected_factor):
     # elif selected_factor ==  'estu_valormatriculauniversidad':
     # elif selected_factor ==  'estu_simulacrotipoicfes':
     # elif selected_factor ==  'estu_horassemanatrabaja':
+
+
+# Radar Chart Callback
+@app.callback(
+    Output('graph-with-prediction', 'figure'),
+    [Input('test-dropdown-form', 'value'),
+    Input('departament-dropdown-form', 'value')])
+def update_figure(selected_test, selected_dpto):
+    df = pd.DataFrame(dict(
+        punt=[150, 150, 150, 150, 180],
+        module=available_module))
+    
+    df['module_name'] = df['module'].map(presentation_module)
+
+    fig = px.line_polar(df, r='punt', theta='module_name', line_close=True,
+                        labels={'punt': 'Score', 'module_name': 'Module'})
+
+    fig.update_layout(
+        polar = dict(
+            radialaxis = dict(
+                range=[0, 300], 
+                showticklabels=True,
+                dtick=75
+            )
+        )
+    )
+    
+    return fig
 
 
 print('Loading app...')
