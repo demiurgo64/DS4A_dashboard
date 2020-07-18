@@ -286,8 +286,9 @@ app.layout = html.Div([
 
         dcc.Tab(label='Explore results', children=[
             
-            # Row with filter and map
+            # Row with factor filter and graph
             html.Div([
+                
                 # Filter box
                 html.Div([
 
@@ -340,7 +341,7 @@ app.layout = html.Div([
                 id="cross-filter-options"
                 ),
 
-                # Graphs
+                # Graph with one factor
                 html.Div([
 
                     html.Div([
@@ -375,6 +376,7 @@ app.layout = html.Div([
 
             # Row with form and predicition
             html.Div([
+                
                 # Form box
                 html.Div([
 
@@ -441,10 +443,10 @@ app.layout = html.Div([
                     className="mini_filter"),
 
                     html.Div([
-                        html.Label('Institution Level'),
+                        html.Label('Knowledge Area'),
                         dcc.Dropdown(
-                            id='inst-level-dropdown-form',
-                            options=[{'label': i.title(), 'value': i} for i in available_inst_level],
+                            id='area-dropdown-form',
+                            options=[{'label': i.title(), 'value': i} for i in ['']],
                             value=None
                         )
                     ],
@@ -461,21 +463,37 @@ app.layout = html.Div([
                     className="mini_filter"),
 
                     html.Div([
-                        html.Label('Education Method'),
-                        dcc.Dropdown(
-                            id='inst-method-dropdown-form',
-                            options=[{'label': i.title(), 'value': i} for i in available_method],
-                            value=None
-                        )
+
+                        html.Div([
+                            html.Label('Education Method'),
+                            dcc.Dropdown(
+                                id='inst-method-dropdown-form',
+                                options=[{'label': i.title(), 'value': i} for i in available_method],
+                                value=None
+                            )
+                        ],
+                        className="mini_filter right-column auto_width flex-1"),
+
+                        html.Div([
+                            html.Label('Institution Level'),
+                            dcc.Dropdown(
+                                id='inst-level-dropdown-form',
+                                options=[{'label': i.title(), 'value': i} for i in available_inst_level],
+                                value=None
+                            )
+                        ],
+                        className="mini_filter right-column auto_width flex-1")
+                    
                     ],
-                    className="mini_filter")
+                    className="row flex-display"
+                    )
 
                 ],
                 className="pretty_container four columns",
                 id="factors-form"
                 ),
-
-                # Graphs
+                
+                # Graph with prediction
                 html.Div([
 
                     html.Div([
