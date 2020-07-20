@@ -3,11 +3,13 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.express as px
+import plotly.graph_objects as go
 
 import base64
 import pandas as pd
 import json
 import os
+import numpy as np
 
 import joblib
 from sqlalchemy import create_engine
@@ -576,18 +578,57 @@ app.layout = html.Div([
 # Graph Functions
 
 def get_box_plot(selected_test,selected_year, selected_mod, selected_factor):
+    # query DB to select boxplot parameters 
     query = '''
-        SELECT {3}, {0} 
-        FROM datafinaldepurado 
-        WHERE prueba = '{1}' 
-        AND year = {2}
-    '''.format(selected_mod, selected_test, selected_year, selected_factor)
+		SELECT * FROM boxplots_stats 
+		WHERE  test = '{0}' 
+		AND year = {1}
+		AND module = '{2}' 
+		AND factor = '{3}';
+	'''.format(selected_test,selected_year, selected_mod, selected_factor)
+	
+    print(query)
+    stats_db = pd.read_sql_query(query,con=engine)
+    print(stats_db) 
+    
+    # query DB to select boxplot outliers
+    query = '''
+		SELECT * FROM boxplots_outliers 
+		WHERE test = '{0}' 
+		AND year = {1}
+		AND module = '{2}' 
+		AND factor = '{3}';
+	'''.format(selected_test,selected_year, selected_mod, selected_factor)
 
-    filtered_df = pd.read_sql_query(query,con=engine)
-    filtered_df.dropna(inplace=True)
+    outliers_db = pd.read_sql_query(query,con=engine)
+    print(outliers_db)  
 
-    fig = px.box(filtered_df, x=selected_factor, y=selected_mod, color=selected_factor,
-                 category_orders=presentation_order)
+    # transform into numpy arrays for plotting
+    means = np.reshape(stats_db['mean'].to_numpy(), (-1,1))
+    medians = np.reshape(stats_db['median'].to_numpy(), (-1,1))
+    q1s = np.reshape(stats_db['q1'].to_numpy(), (-1,1))
+    q3s = np.reshape(stats_db['q3'].to_numpy(), (-1,1))
+    lowerfences = np.reshape(stats_db['lowerfence'].to_numpy(), (-1,1))
+    upperfences = np.reshape(stats_db['upperfence'].to_numpy(), (-1,1))
+
+    # transform outliers numpy arrays for plotting
+    names = stats_db['level'].to_numpy()
+    outliers = np.empty(len(names), dtype=object)
+    for i, name in enumerate(names):
+        outliers[i] = outliers_db.loc[outliers_db['level']==name, 'outlier'].to_numpy()
+	
+    print(names)
+
+    fig = go.Figure()
+
+    xs = np.reshape(names, (-1,1))
+    color=px.colors.qualitative.Plotly[:len(xs)]
+
+    for mean, median, q1, q3, lowerfence, upperfence, y, name, x, color in zip(means, medians, q1s, q3s, lowerfences, upperfences, outliers, names, xs, color):
+        fig.add_trace(go.Box(mean=mean, median=median, q1=q1, q3=q3, lowerfence = lowerfence, upperfence = upperfence, boxpoints='all', name=name, x = x, orientation='v', marker_color=color))
+        x_art=list(x)*len(y)
+        fig.add_trace(go.Scatter(x=x_art,y=y, name=name, mode='markers', showlegend=False, marker_color=color))
+	
     
     fig.update_layout(
         transition_duration=2,
