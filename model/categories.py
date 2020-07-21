@@ -79,7 +79,7 @@ cat_year = {2016: 0, 2017: 1, 2018: 2, 2019: 3}
 #  'FAMI_ESTRATOVIVIENDA','FAMI_EDUCACIONMADRE', 'FAMI_EDUCACIONPADRE','ESTU_METODO_PRGM','INST_CARACTER_ACADEMICO',
 #  'ESTU_HORASSEMANATRABAJA','ESTU_ACTIVIDADREFUERZOGENERIC','ESTU_ACTIVIDADREFUERZOAREAS', 'ESTU_SIMULACROTIPOICFES',
 #  'ESTU_PAGOMATRICULAPROPIO','ESTU_PAGOMATRICULAPADRES','ESTU_PAGOMATRICULACREDITO','ESTU_PAGOMATRICULABECA',
-#  'ESTU_VALORMATRICULAUNIVERSIDAD', 'ESTU_PRGM_DEPARTAMENTO','ESTU_NUCLEO_PREGRADO','PERIODO-X'
+#  'ESTU_VALORMATRICULAUNIVERSIDAD', 'ESTU_PRGM_DEPARTAMENTO','ESTU_NUCLEO_PREGRADO'
 
 def get_feature_vector(selected_dpto, selected_gender, selected_stratum, selected_inst_type, 
                     selected_area, selected_tuition, has_scholarship, selected_level):
@@ -108,10 +108,9 @@ def get_feature_vector(selected_dpto, selected_gender, selected_stratum, selecte
             cat_yes_no[has_scholarship],
             cat_tuition_cost[selected_tuition],
             cat_dpto[selected_dpto],
-            cat_area[selected_area],
-            cat_year[2017]
+            cat_area[selected_area]
         ]
     except:
-        vector = [0] * 23
+        vector = [0] * 22
 
     return vector

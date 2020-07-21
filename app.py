@@ -35,8 +35,11 @@ with open(json_path, encoding='utf-8') as json_file:
 
 # -----------------
 # Model
-model_path = os.path.join(base_dir, 'model', 'model-random-forest1.joblib')
-razona_punt_model = joblib.load(model_path)
+pro_compet_punt_model = joblib.load(os.path.join(base_dir, 'model', 'competencia-ciudadana-saberpro-prueba1.joblib'))
+pro_comuni_punt_model = joblib.load(os.path.join(base_dir, 'model', 'comunicacion-escrita-saberpro-prueba1.joblib'))
+pro_ingles_punt_model = joblib.load(os.path.join(base_dir, 'model', 'ingles-saberpro-prueba1.joblib'))
+pro_lectur_punt_model = joblib.load(os.path.join(base_dir, 'model', 'lectura-critica-saberpro-prueba1.joblib'))
+pro_razona_punt_model = joblib.load(os.path.join(base_dir, 'model', 'razonamiento-cuantitativo-saberpro-prueba1.joblib'))
 
 
 # -----------------
@@ -671,14 +674,14 @@ def update_figure(selected_test, selected_dpto, selected_gender, selected_stratu
     feature_vector = get_feature_vector(selected_dpto, selected_gender, selected_stratum, selected_inst_type, 
                     selected_area, selected_tuition, has_scholarship, selected_level)
 
-    comuni_punt = 150
-    comp_punt = 150
-    lect_punt = 150
-    razona_punt = round(razona_punt_model.predict([feature_vector])[0], 0)
-    ingles_punt = 180
+    comuni_punt = round(pro_comuni_punt_model.predict([feature_vector])[0], 0)
+    compet_punt = round(pro_compet_punt_model.predict([feature_vector])[0], 0)
+    lectur_punt = round(pro_lectur_punt_model.predict([feature_vector])[0], 0)
+    razona_punt = round(pro_razona_punt_model.predict([feature_vector])[0], 0)
+    ingles_punt = round(pro_ingles_punt_model.predict([feature_vector])[0], 0)
 
     polar_df = pd.DataFrame(dict(
-        punt=[comuni_punt, comp_punt, lect_punt, razona_punt, ingles_punt],
+        punt=[comuni_punt, compet_punt, lectur_punt, razona_punt, ingles_punt],
         module=available_module))
     
     polar_df['module_name'] = polar_df['module'].map(presentation_module)
