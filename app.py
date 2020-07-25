@@ -4,6 +4,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 import base64
 import pandas as pd
@@ -16,6 +17,7 @@ from sqlalchemy import create_engine
 
 from data.texts import section_1_title, section_1_p_1, section_1_p_2
 from model.categories import get_feature_vector
+from model.categories_contribution import pie_df
 
 # -----------------
 # DB connection
@@ -231,8 +233,8 @@ presentation_order = {
     'estu_metodo_prgm': available_method,
     'inst_origen': available_inst_type,
     'inst_caracter_academico': available_inst_level,
-    'estu_valormatriculauniversidad': available_tuition_cost
-    #'estu_nucleo_pregrado': [],
+    'estu_valormatriculauniversidad': available_tuition_cost,
+    'estu_nucleo_pregrado': available_area
 }
 
 
@@ -418,6 +420,54 @@ app.layout = html.Div([
             # Row with form and predicition
             html.Div([
                 
+                # Instructions box
+                html.Div([
+
+                    html.P(
+                        "Choosing from the factors below, predict your results on each module of the selected test.",
+                        className="mini_filter right-column auto_width flex-1",
+                        style={
+                            'font-weight': 'bold'
+                        }
+                    ),
+
+                    html.P(
+                        "You should take into account the proportion of the score that is explained by a factor. "
+                        "It is ploted with pie charts on the right for reference. "
+                        "Hover on a color to see the factor and proportion on each module.",
+                        className="mini_filter right-column auto_width flex-1"
+                    )
+                ],
+                className="pretty_container four columns",
+                ),
+                
+                # Contribution graph
+                html.Div([
+                    dcc.Graph(
+                        id='factors-contribution-graph',
+                        config={
+                            'displayModeBar': False
+                        }
+                    )
+                ],
+                className="pretty_container flex-1 eight columns right-column"
+                )
+            
+            ],
+            className="row flex-display"
+            ),
+
+            # Section header
+            # html.H2(
+            #     "Predicted",
+            #     className="mini_filter right-column auto_width flex-1"
+            # ),
+
+            html.Br(),
+            
+            # Row with form and predicition
+            html.Div([
+                
                 # Form box
                 html.Div([
 
@@ -533,7 +583,7 @@ app.layout = html.Div([
                 className="pretty_container four columns",
                 id="factors-form"
                 ),
-                
+
                 # Graph with prediction
                 html.Div([
 
@@ -673,7 +723,7 @@ def get_map(selected_test,selected_year, selected_mod):
 # -----------------
 # Callbacks
 
-# Box Plot Callback
+# Factor Chart Callback
 @app.callback(
     Output('graph-with-filter', 'figure'),
     [Input('test-dropdown', 'value'),
@@ -683,17 +733,64 @@ def get_map(selected_test,selected_year, selected_mod):
 def update_figure(selected_test,selected_year, selected_mod, selected_factor):
     if selected_factor ==  'estu_prgm_departamento':
         return get_map(selected_test,selected_year, selected_mod)
-    elif selected_factor in  ['fami_estratovivienda', 'estu_genero']:
-        return get_box_plot(selected_test,selected_year, selected_mod, selected_factor)
     else:
         return get_box_plot(selected_test,selected_year, selected_mod, selected_factor)
-    # if selected_factor ==  'estu_nucleo_pregrado':
-    # elif selected_factor ==  'inst_caracter_academico':
-    # elif selected_factor ==  'estu_metodo_prgm':
-    # elif selected_factor ==  'inst_origen':
-    # elif selected_factor ==  'estu_valormatriculauniversidad':
-    # elif selected_factor ==  'estu_simulacrotipoicfes':
-    # elif selected_factor ==  'estu_horassemanatrabaja':
+
+
+# Factor contribution Pie Charts
+@app.callback(
+    Output('factors-contribution-graph', 'figure'),
+    [Input('test-dropdown-form', 'value')])
+def update_contribution_figure(selected_test):
+    fig = make_subplots(rows=1, cols=5, specs=[[{'type':'domain'}] * 5 ])
+
+    for i, module in enumerate(available_module, 1):
+        pie_module_filter = (pie_df.test == selected_test) & (pie_df.module == module)
+        pie_module_df = pie_df[pie_module_filter]
+
+        labels = pie_module_df['factor']
+        values = pie_module_df['contribution']
+
+        title = '<br>'.join(presentation_module[module].split())
+        title = title if '<br>' in title else title + '<br>\n'
+
+        # Pie chart
+        fig.add_trace(
+            go.Pie(
+                labels=labels, 
+                values=values, 
+                name='<br>'.join(presentation_module[module].split()), 
+                marker_colors=px.colors.qualitative.D3,
+                title=title
+            ),
+            row=1, 
+            col=i
+        )
+
+    # Transparent background
+    fig.update_layout(
+        height=150,
+        margin=dict(l=20, r=20, t=10, b=10, pad=0),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        transition_duration=2,
+    )
+
+    # Subplot title and tooltip
+    fig.update_traces(
+        title=dict(
+            position='bottom center',
+        ),
+        hoverinfo='label+percent', 
+        textinfo='none'
+    )
+
+    # Hide legend
+    fig.update(
+        layout_showlegend=False
+    )
+    
+    return fig
 
 
 # Radar Chart Callback
