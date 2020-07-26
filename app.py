@@ -267,6 +267,19 @@ presentation_column_short_names = {
     'estu_horassemanatrabaja': 'Horas que trabaja por semana'
 }
 
+presentation_column_short_names_eng = {
+    'estu_nucleo_pregrado': 'Knowledge area',
+    'estu_prgm_departamento': 'Administrative Region',
+    'estu_genero': 'Gender',
+    'fami_estratovivienda': 'Socioeconomic stratum',
+    'inst_caracter_academico': 'Institution level',
+    'estu_metodo_prgm': 'Methodology',
+    'inst_origen': 'Institution Type',
+    'estu_valormatriculauniversidad': 'Tuition fee',
+    'estu_simulacrotipoicfes': 'Test preparation',
+    'estu_horassemanatrabaja': 'Work hours per week'
+}
+
 presentation_test = {
     "SaberPro": "Saber Pro",
     "SaberTyT": "Saber TyT"
@@ -278,6 +291,19 @@ presentation_module = {
     "mod_lectura_critica_punt": "Lectura Crítica",
     "mod_razona_cuantitat_punt": "Razonamiento Cuantitativo",
     "mod_ingles_punt": "Inglés"
+}
+
+description_factors_eng = {
+    'estu_nucleo_pregrado': 'The test differs according to the Knowledge area of the program the student is enrolled in.',
+    'estu_prgm_departamento': 'The performance of the students may differ according to the location (Administrative Regions or Departments) of the Institution',
+    'estu_genero': 'Students may choose to disclose their gender or not',
+    'fami_estratovivienda': 'In Colombia urban households are assigned a Socioeconomic stratum between 1 and 6, where 1 corresponds to the poorest households and 6 to the richest. Rural households belong to a separate group.',
+    'inst_caracter_academico': 'Academic institutions may belong to different Institution levels according to the programs they offer and a classification made by the Ministry of Education.',
+    'estu_metodo_prgm': 'An academic program may be taught using a different Methodology. It can be fully face-to-face (presencial), fully virtual, or blended.',
+    'inst_origen': 'The Type of the institution refers to their ownership. It can be public (oficial), owned by either the country, the department or the city, or it can be private (fundación or corporación).',
+    'estu_valormatriculauniversidad': 'Tuition fee reflects the cost of each semester of the program taken by the student.',
+    'estu_simulacrotipoicfes': 'Test preparation refers to the ability of the student to prepare the test with a simulated version or not.',
+    'estu_horassemanatrabaja': 'Work hours per week reflect the number of hours that the student dedicates to paid work at the same time he or she undergoes his/her studies.'
 }
 
 # -----------------
@@ -336,7 +362,7 @@ app.layout = html.Div([
                 html.Div([
 
                     html.Div([
-                        html.Label('Test'),
+                        html.Label('Test', title='Select between the test for professionals (SaberPro) and the test for technicians (SaberTyT)'),
                         dcc.Dropdown(
                             id='test-dropdown',
                             options=[{'label': presentation_test[i], 'value': i} for i in available_test],
@@ -346,7 +372,13 @@ app.layout = html.Div([
                     className="mini_filter"),
 
                     html.Div([
-                        html.Label('Module'),
+                        html.Label('Module', title='''Select one of the five modules in either test:
+> Written communication: Comunicación Escrita
+> Citizenship compentences: Competencias Ciudadanas
+> Critical reading: Lectura Crítica
+> Quantitave reasoning: Razonamiento Cuantitativo
+> English: Inglés'''	
+						),
                         dcc.Dropdown(
                             id='module-dropdown',
                             options=[{'label': presentation_module[i], 'value': i} for i in available_module],
@@ -356,7 +388,18 @@ app.layout = html.Div([
                     className="mini_filter"),
 
                     html.Div([
-                        html.Label('Factor'),
+                        html.Label('Factor', title='''Select one of the factors that may impact the test results:
+> Knowledge area: Programa: Núcleo de conocimiento
+> Department (region): 'Institución: Departamento geográfico
+> Gender: Personal: Género
+> Socioeconomic stratum: Socioeconómico: Estrato
+> Institution level: Institución: Nivel
+> Instruction Methodology: Institución: Metodología
+> Institution type: Institución: Régimen
+> Tuition fee: Programa: Valor Matrícula
+> Test preparation: Personal: Preparación de prueba con simulacro
+> Work hours: Personal: Horas que trabaja por semana'''	
+						),
                         dcc.Dropdown(
                             id='factor-dropdown',
                             options=[{'label': presentation_column_names[i], 'value': i} for i in available_factor],
@@ -366,7 +409,7 @@ app.layout = html.Div([
                     className="mini_filter"),
 
                     html.Div([
-                        html.Label('Year'),
+                        html.Label('Year', title='Select the year the test was performed'),
                         html.Br(),
                         dcc.Slider(
                             id='year-slider',
@@ -386,7 +429,15 @@ app.layout = html.Div([
 
                 # Graph with one factor
                 html.Div([
-
+					html.Div([
+						#html.H2("Test: SaberPro - Factor: Department"),
+						#html.P("Here we display how the factor department impacts the results of the SaberPro test"),
+						html.H2(id="factor-desc-title", children=["init"]),
+						html.P(id="factor-desc", children=["init"]),
+					],
+					className="module-description"),
+					
+					
                     html.Div([
                         dcc.Graph(id='graph-with-filter')
                     ],
@@ -474,7 +525,7 @@ app.layout = html.Div([
                         html.Div([
 
                             html.Div([
-                            html.Label('Test'),
+                            html.Label('Test', title='Select between the test for professionals (SaberPro) and the test for technicians (SaberTyT)'),
                             dcc.Dropdown(
                                 id='test-dropdown-form',
                                 options=[{'label': presentation_test[i], 'value': i} for i in available_test],
@@ -484,7 +535,7 @@ app.layout = html.Div([
                         className="mini_filter right-column auto_width flex-1"),
 
                         html.Div([
-                            html.Label('Departament'),
+                            html.Label('Departament', title='Administrative Region'),
                             dcc.Dropdown(
                                 id='departament-dropdown-form',
                                 options=[{'label': i.title(), 'value': i} for i in available_dpto],
@@ -500,7 +551,7 @@ app.layout = html.Div([
                     html.Div([
 
                         html.Div([
-                            html.Label('Gender'),
+                            html.Label('Gender', title='Gender'),
                             dcc.Dropdown(
                                 id='gender-dropdown-form',
                                 options=[{'label': i.title(), 'value': i} for i in available_gender],
@@ -510,7 +561,7 @@ app.layout = html.Div([
                         className="mini_filter right-column auto_width flex-1"),
 
                         html.Div([
-                            html.Label('Stratum'),
+                            html.Label('Stratum', title='Household socioeconomic stratum'),
                             dcc.Dropdown(
                                 id='stratum-dropdown-form',
                                 options=[{'label': i.title(), 'value': i} for i in available_estrato],
@@ -524,7 +575,7 @@ app.layout = html.Div([
                     ),
 
                     html.Div([
-                        html.Label('Institution Type'),
+                        html.Label('Institution Type', title='Institution Type'),
                         dcc.Dropdown(
                             id='inst-type-dropdown-form',
                             options=[{'label': i.title(), 'value': i} for i in available_inst_type],
@@ -534,7 +585,7 @@ app.layout = html.Div([
                     className="mini_filter"),
 
                     html.Div([
-                        html.Label('Knowledge Area'),
+                        html.Label('Knowledge Area', title='Knowledge Area'),
                         dcc.Dropdown(
                             id='area-dropdown-form',
                             options=[{'label': i.title(), 'value': i} for i in available_area],
@@ -544,7 +595,7 @@ app.layout = html.Div([
                     className="mini_filter"),
 
                     html.Div([
-                        html.Label('Tuition cost'),
+                        html.Label('Tuition cost', title='Tuition cost'),
                         dcc.Dropdown(
                             id='inst-tuition-dropdown-form',
                             options=[{'label': i, 'value': i} for i in available_tuition_cost],
@@ -556,7 +607,7 @@ app.layout = html.Div([
                     html.Div([
 
                         html.Div([
-                            html.Label('Scholarship'),
+                            html.Label('Scholarship', title='Scholarship'),
                             dcc.Dropdown(
                                 id='scholarship-dropdown-form',
                                 options=[{'label': i.title(), 'value': i} for i in available_yes_no],
@@ -566,7 +617,7 @@ app.layout = html.Div([
                         className="mini_filter right-column auto_width flex-1"),
 
                         html.Div([
-                            html.Label('Institution Level'),
+                            html.Label('Institution Level', title='Institution Level'),
                             dcc.Dropdown(
                                 id='inst-level-dropdown-form',
                                 options=[{'label': i.title(), 'value': i} for i in available_inst_level],
@@ -737,6 +788,27 @@ def update_figure(selected_test,selected_year, selected_mod, selected_factor):
         return get_box_plot(selected_test,selected_year, selected_mod, selected_factor)
 
 
+
+# Factor Description Title Callback
+@app.callback(
+    Output('factor-desc-title', 'children'),
+    [Input('test-dropdown', 'value'),
+    Input('module-dropdown', 'value'),
+    Input('factor-dropdown', 'value')])
+def update_figure(selected_test, selected_mod, selected_factor):
+    return "How the "+presentation_column_short_names_eng[selected_factor]+" impacts the performance in the "+selected_test+" test?"
+	
+# Factor Description Callback
+@app.callback(
+    Output('factor-desc', 'children'),
+    [Input('test-dropdown', 'value'),
+    Input('module-dropdown', 'value'),
+    Input('factor-dropdown', 'value')])
+def update_figure(selected_test, selected_mod, selected_factor):
+    return description_factors_eng[selected_factor]
+
+
+		
 # Factor contribution Pie Charts
 @app.callback(
     Output('factors-contribution-graph', 'figure'),
