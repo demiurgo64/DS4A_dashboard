@@ -38,13 +38,18 @@ with open(json_path, encoding='utf-8') as json_file:
 
 
 # -----------------
-# Model
+# Models
 pro_compet_punt_model = joblib.load(os.path.join(base_dir, 'model', 'competencia-ciudadana-saberpro-prueba2.joblib'))
 pro_comuni_punt_model = joblib.load(os.path.join(base_dir, 'model', 'comunicacion-escrita-saberpro-prueba2.joblib'))
 pro_ingles_punt_model = joblib.load(os.path.join(base_dir, 'model', 'ingles-saberpro-prueba2.joblib'))
 pro_lectur_punt_model = joblib.load(os.path.join(base_dir, 'model', 'lectura-critica-saberpro-prueba2.joblib'))
 pro_razona_punt_model = joblib.load(os.path.join(base_dir, 'model', 'razonamiento-cuantitativo-saberpro-prueba2.joblib'))
 
+tyt_compet_punt_model = joblib.load(os.path.join(base_dir, 'model', 'tyt-competencia ciudadana-model-random-forest.joblib'))
+tyt_comuni_punt_model = joblib.load(os.path.join(base_dir, 'model', 'tyt-comunicacion escrita-model-random-forest.joblib'))
+tyt_ingles_punt_model = joblib.load(os.path.join(base_dir, 'model', 'tyt-ingles-model-random-forest.joblib'))
+tyt_lectur_punt_model = joblib.load(os.path.join(base_dir, 'model', 'tyt-lectura critica-model-random-forest.joblib'))
+tyt_razona_punt_model = joblib.load(os.path.join(base_dir, 'model', 'tyt-razonamiento cuantitativo-model-random-forest.joblib'))
 
 # -----------------
 # Flask app
@@ -877,15 +882,26 @@ def update_contribution_figure(selected_test):
 def update_figure(selected_test, selected_dpto, selected_gender, selected_stratum, selected_inst_type, 
                     selected_area, selected_tuition, selected_method, selected_level):
 
+    # Select models
+    comuni_punt_model = pro_comuni_punt_model if selected_test == "SaberPro" else tyt_comuni_punt_model
+    compet_punt_model = pro_compet_punt_model if selected_test == "SaberPro" else tyt_compet_punt_model
+    lectur_punt_model = pro_lectur_punt_model if selected_test == "SaberPro" else tyt_lectur_punt_model
+    razona_punt_model = pro_razona_punt_model if selected_test == "SaberPro" else tyt_razona_punt_model
+    ingles_punt_model = pro_ingles_punt_model if selected_test == "SaberPro" else tyt_ingles_punt_model
+
+    # Scale difference
+    scale = 1 if selected_test == "SaberPro" else (2/3)
+    scale_limit = [0,300] if selected_test == "SaberPro" else [0,200]
+    
     # Get feature cat coded vector
     feature_vector = get_feature_vector(selected_dpto, selected_gender, selected_stratum, selected_inst_type, 
                     selected_area, selected_tuition, selected_method, selected_level)
 
-    comuni_punt = round(pro_comuni_punt_model.predict([feature_vector])[0], 0)
-    compet_punt = round(pro_compet_punt_model.predict([feature_vector])[0], 0)
-    lectur_punt = round(pro_lectur_punt_model.predict([feature_vector])[0], 0)
-    razona_punt = round(pro_razona_punt_model.predict([feature_vector])[0], 0)
-    ingles_punt = round(pro_ingles_punt_model.predict([feature_vector])[0], 0)
+    comuni_punt = round(comuni_punt_model.predict([feature_vector])[0]*scale, 0)
+    compet_punt = round(compet_punt_model.predict([feature_vector])[0]*scale, 0)
+    lectur_punt = round(lectur_punt_model.predict([feature_vector])[0]*scale, 0)
+    razona_punt = round(razona_punt_model.predict([feature_vector])[0]*scale, 0)
+    ingles_punt = round(ingles_punt_model.predict([feature_vector])[0]*scale, 0)
 
     polar_df = pd.DataFrame(dict(
         punt=[comuni_punt, compet_punt, lectur_punt, razona_punt, ingles_punt],
@@ -901,7 +917,7 @@ def update_figure(selected_test, selected_dpto, selected_gender, selected_stratu
     fig.update_layout(
         polar = dict(
             radialaxis = dict(
-                range=[0, 300], 
+                range=scale_limit, 
                 showticklabels=True,
                 dtick=100
             )
