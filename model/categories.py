@@ -75,42 +75,26 @@ cat_year = {2016: 0, 2017: 1, 2018: 2, 2019: 3}
 # -----------------
 # Graph Functions
 
-#  'ESTU_GENERO','INST_ORIGEN','FAMI_TIENEAUTOMOVIL','FAMI_TIENELAVADORA','FAMI_TIENECOMPUTADOR','FAMI_TIENEINTERNET',
-#  'FAMI_ESTRATOVIVIENDA','FAMI_EDUCACIONMADRE', 'FAMI_EDUCACIONPADRE','ESTU_METODO_PRGM','INST_CARACTER_ACADEMICO',
-#  'ESTU_HORASSEMANATRABAJA','ESTU_ACTIVIDADREFUERZOGENERIC','ESTU_ACTIVIDADREFUERZOAREAS', 'ESTU_SIMULACROTIPOICFES',
-#  'ESTU_PAGOMATRICULAPROPIO','ESTU_PAGOMATRICULAPADRES','ESTU_PAGOMATRICULACREDITO','ESTU_PAGOMATRICULABECA',
+#  'ESTU_GENERO','INST_ORIGEN',
+#  'FAMI_ESTRATOVIVIENDA','ESTU_METODO_PRGM','INST_CARACTER_ACADEMICO',
 #  'ESTU_VALORMATRICULAUNIVERSIDAD', 'ESTU_PRGM_DEPARTAMENTO','ESTU_NUCLEO_PREGRADO'
 
 def get_feature_vector(selected_dpto, selected_gender, selected_stratum, selected_inst_type, 
-                    selected_area, selected_tuition, has_scholarship, selected_level):
+                    selected_area, selected_tuition, selected_method, selected_level):
     
     try: 
         # Feature vector following training order
         vector = [
             cat_gender[selected_gender],
             cat_inst_type[selected_inst_type],
-            cat_yes_no['No'],
-            cat_yes_no['No'],
-            cat_yes_no['No'],
-            cat_yes_no['No'],
             cat_stratum[selected_stratum],
-            cat_parent_education['Educación profesional completa'],
-            cat_parent_education['Educación profesional completa'],
-            cat_method['PRESENCIAL'],
+            cat_method[selected_method],
             cat_inst_level[selected_level],
-            cat_work_week_hours[0],
-            cat_yes_no['No'],
-            cat_yes_no['No'],
-            cat_yes_no['No'],
-            cat_yes_no['No'],
-            cat_yes_no['No'],
-            cat_yes_no['No'],
-            cat_yes_no[has_scholarship],
             cat_tuition_cost[selected_tuition],
             cat_dpto[selected_dpto],
             cat_area[selected_area]
         ]
     except:
-        vector = [0] * 22
+        vector = [0] * 8
 
     return vector

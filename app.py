@@ -39,11 +39,11 @@ with open(json_path, encoding='utf-8') as json_file:
 
 # -----------------
 # Model
-pro_compet_punt_model = joblib.load(os.path.join(base_dir, 'model', 'competencia-ciudadana-saberpro-prueba1.joblib'))
-pro_comuni_punt_model = joblib.load(os.path.join(base_dir, 'model', 'comunicacion-escrita-saberpro-prueba1.joblib'))
-pro_ingles_punt_model = joblib.load(os.path.join(base_dir, 'model', 'ingles-saberpro-prueba1.joblib'))
-pro_lectur_punt_model = joblib.load(os.path.join(base_dir, 'model', 'lectura-critica-saberpro-prueba1.joblib'))
-pro_razona_punt_model = joblib.load(os.path.join(base_dir, 'model', 'razonamiento-cuantitativo-saberpro-prueba1.joblib'))
+pro_compet_punt_model = joblib.load(os.path.join(base_dir, 'model', 'competencia-ciudadana-saberpro-prueba2.joblib'))
+pro_comuni_punt_model = joblib.load(os.path.join(base_dir, 'model', 'comunicacion-escrita-saberpro-prueba2.joblib'))
+pro_ingles_punt_model = joblib.load(os.path.join(base_dir, 'model', 'ingles-saberpro-prueba2.joblib'))
+pro_lectur_punt_model = joblib.load(os.path.join(base_dir, 'model', 'lectura-critica-saberpro-prueba2.joblib'))
+pro_razona_punt_model = joblib.load(os.path.join(base_dir, 'model', 'razonamiento-cuantitativo-saberpro-prueba2.joblib'))
 
 
 # -----------------
@@ -556,11 +556,11 @@ app.layout = html.Div([
                     html.Div([
 
                         html.Div([
-                            html.Label('Scholarship'),
+                            html.Label('Education Method'),
                             dcc.Dropdown(
-                                id='scholarship-dropdown-form',
-                                options=[{'label': i.title(), 'value': i} for i in available_yes_no],
-                                value=available_yes_no[0]
+                                id='method-dropdown-form',
+                                options=[{'label': i.title(), 'value': i} for i in available_method],
+                                value=available_method[0]
                             )
                         ],
                         className="mini_filter right-column auto_width flex-1"),
@@ -761,7 +761,8 @@ def update_contribution_figure(selected_test):
                 values=values, 
                 name='<br>'.join(presentation_module[module].split()), 
                 marker_colors=px.colors.qualitative.D3,
-                title=title
+                title=title,
+                legendgroup="factors"
             ),
             row=1, 
             col=i
@@ -769,7 +770,7 @@ def update_contribution_figure(selected_test):
 
     # Transparent background
     fig.update_layout(
-        height=150,
+        height=200,
         margin=dict(l=20, r=20, t=10, b=10, pad=0),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
@@ -782,12 +783,8 @@ def update_contribution_figure(selected_test):
             position='bottom center',
         ),
         hoverinfo='label+percent', 
-        textinfo='none'
-    )
-
-    # Hide legend
-    fig.update(
-        layout_showlegend=False
+        textinfo='none',
+        sort=True
     )
     
     return fig
@@ -803,14 +800,14 @@ def update_contribution_figure(selected_test):
     Input('inst-type-dropdown-form', 'value'),
     Input('area-dropdown-form', 'value'),
     Input('inst-tuition-dropdown-form', 'value'),
-    Input('scholarship-dropdown-form', 'value'),
+    Input('method-dropdown-form', 'value'),
     Input('inst-level-dropdown-form', 'value')])
 def update_figure(selected_test, selected_dpto, selected_gender, selected_stratum, selected_inst_type, 
-                    selected_area, selected_tuition, has_scholarship, selected_level):
+                    selected_area, selected_tuition, selected_method, selected_level):
 
     # Get feature cat coded vector
     feature_vector = get_feature_vector(selected_dpto, selected_gender, selected_stratum, selected_inst_type, 
-                    selected_area, selected_tuition, has_scholarship, selected_level)
+                    selected_area, selected_tuition, selected_method, selected_level)
 
     comuni_punt = round(pro_comuni_punt_model.predict([feature_vector])[0], 0)
     compet_punt = round(pro_compet_punt_model.predict([feature_vector])[0], 0)
