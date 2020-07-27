@@ -725,6 +725,9 @@ def get_box_plot(selected_test,selected_year, selected_mod, selected_factor):
     outliers = np.empty(len(names), dtype=object)
     for i, name in enumerate(names):
         outliers[i] = outliers_db.loc[outliers_db['level']==name, 'outlier'].to_numpy()
+        if selected_factor == 'estu_horassemanatrabaja' and name =='0':
+            names[i] = '0 horas'
+		    
 	
     print(names)
 
