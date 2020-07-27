@@ -119,7 +119,7 @@ available_gender = [
 
 # Horas Semana Trabaja
 available_work_week_hours = [
-    0,
+    "0 horas",
     "Menos de 10 horas",
     "Entre 11 y 20 horas",
     "Entre 21 y 30 horas",
@@ -253,7 +253,7 @@ presentation_column_names = {
     'fami_estratovivienda': 'Socioeconómico: Estrato',
     'inst_caracter_academico': 'Institución: Nivel',
     'estu_metodo_prgm': 'Institución: Metodología',
-    'inst_origen': 'Institución: Régimen',
+    'inst_origen': 'Institución: Tipo',
     'estu_valormatriculauniversidad': 'Programa: Valor Matrícula',
     'estu_simulacrotipoicfes': 'Personal: Preparación de prueba con simulacro',
     'estu_horassemanatrabaja': 'Personal: Horas que trabaja por semana'
@@ -266,7 +266,7 @@ presentation_column_short_names = {
     'fami_estratovivienda': 'Estrato',
     'inst_caracter_academico': 'Nivel',
     'estu_metodo_prgm': 'Metodología',
-    'inst_origen': 'Régimen',
+    'inst_origen': 'Tipo',
     'estu_valormatriculauniversidad': 'Valor Matrícula',
     'estu_simulacrotipoicfes': 'Preparación de prueba con simulacro',
     'estu_horassemanatrabaja': 'Horas que trabaja por semana'
@@ -400,7 +400,7 @@ app.layout = html.Div([
 > Socioeconomic stratum: Socioeconómico: Estrato
 > Institution level: Institución: Nivel
 > Instruction Methodology: Institución: Metodología
-> Institution type: Institución: Régimen
+> Institution type: Institución: Tipo
 > Tuition fee: Programa: Valor Matrícula
 > Test preparation: Personal: Preparación de prueba con simulacro
 > Work hours: Personal: Horas que trabaja por semana'''	
