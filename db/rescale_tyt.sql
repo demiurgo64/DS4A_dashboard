@@ -39,7 +39,7 @@ SET
     mod_lectura_critica_punt_max = 2*mod_lectura_critica_punt_max/3,
     mod_razona_cuantitat_punt_max = 2*mod_razona_cuantitat_punt_max/3,
     mod_ingles_punt_max = 2*mod_ingles_punt_max/3
-WHERE test = 'SaberTyT';
+WHERE prueba = 'SaberTyT';
 
 UPDATE fact_estu_prgm_departamento
 SET
@@ -58,7 +58,7 @@ SET
     mod_lectura_critica_punt_max = 2*mod_lectura_critica_punt_max/3,
     mod_razona_cuantitat_punt_max = 2*mod_razona_cuantitat_punt_max/3,
     mod_ingles_punt_max = 2*mod_ingles_punt_max/3
-WHERE test = 'SaberTyT';
+WHERE prueba = 'SaberTyT';
 
 UPDATE fact_estu_genero
 SET
@@ -77,7 +77,7 @@ SET
     mod_lectura_critica_punt_max = 2*mod_lectura_critica_punt_max/3,
     mod_razona_cuantitat_punt_max = 2*mod_razona_cuantitat_punt_max/3,
     mod_ingles_punt_max = 2*mod_ingles_punt_max/3
-WHERE test = 'SaberTyT';
+WHERE prueba = 'SaberTyT';
 
 UPDATE fact_fami_estratovivienda
 SET
@@ -96,7 +96,7 @@ SET
     mod_lectura_critica_punt_max = 2*mod_lectura_critica_punt_max/3,
     mod_razona_cuantitat_punt_max = 2*mod_razona_cuantitat_punt_max/3,
     mod_ingles_punt_max = 2*mod_ingles_punt_max/3
-WHERE test = 'SaberTyT';
+WHERE prueba = 'SaberTyT';
 
 UPDATE fact_inst_caracter_academico
 SET
@@ -115,7 +115,7 @@ SET
     mod_lectura_critica_punt_max = 2*mod_lectura_critica_punt_max/3,
     mod_razona_cuantitat_punt_max = 2*mod_razona_cuantitat_punt_max/3,
     mod_ingles_punt_max = 2*mod_ingles_punt_max/3
-WHERE test = 'SaberTyT';
+WHERE prueba = 'SaberTyT';
 
 UPDATE fact_estu_metodo_prgm
 SET
@@ -134,7 +134,7 @@ SET
     mod_lectura_critica_punt_max = 2*mod_lectura_critica_punt_max/3,
     mod_razona_cuantitat_punt_max = 2*mod_razona_cuantitat_punt_max/3,
     mod_ingles_punt_max = 2*mod_ingles_punt_max/3
-WHERE test = 'SaberTyT';
+WHERE prueba = 'SaberTyT';
 
 UPDATE fact_inst_origen
 SET
@@ -153,7 +153,7 @@ SET
     mod_lectura_critica_punt_max = 2*mod_lectura_critica_punt_max/3,
     mod_razona_cuantitat_punt_max = 2*mod_razona_cuantitat_punt_max/3,
     mod_ingles_punt_max = 2*mod_ingles_punt_max/3
-WHERE test = 'SaberTyT';
+WHERE prueba = 'SaberTyT';
 
 UPDATE fact_estu_valormatriculauniversidad
 SET
@@ -172,7 +172,7 @@ SET
     mod_lectura_critica_punt_max = 2*mod_lectura_critica_punt_max/3,
     mod_razona_cuantitat_punt_max = 2*mod_razona_cuantitat_punt_max/3,
     mod_ingles_punt_max = 2*mod_ingles_punt_max/3
-WHERE test = 'SaberTyT';
+WHERE prueba = 'SaberTyT';
 
 UPDATE fact_estu_simulacrotipoicfes
 SET
@@ -191,7 +191,7 @@ SET
     mod_lectura_critica_punt_max = 2*mod_lectura_critica_punt_max/3,
     mod_razona_cuantitat_punt_max = 2*mod_razona_cuantitat_punt_max/3,
     mod_ingles_punt_max = 2*mod_ingles_punt_max/3
-WHERE test = 'SaberTyT';
+WHERE prueba = 'SaberTyT';
 
 UPDATE fact_estu_horassemanatrabaja
 SET
@@ -210,5 +210,5 @@ SET
     mod_lectura_critica_punt_max = 2*mod_lectura_critica_punt_max/3,
     mod_razona_cuantitat_punt_max = 2*mod_razona_cuantitat_punt_max/3,
     mod_ingles_punt_max = 2*mod_ingles_punt_max/3
-WHERE test = 'SaberTyT';
+WHERE prueba = 'SaberTyT';
 
