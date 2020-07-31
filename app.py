@@ -19,6 +19,7 @@ from data.texts import section_1_title, section_1_p_1, section_1_p_2
 from model.categories import get_feature_vector
 from model.categories_contribution import pie_df
 
+
 # -----------------
 # DB connection
 user = 'postgres'
@@ -35,6 +36,16 @@ base_dir = os.path.dirname(__file__)
 json_path = os.path.join(base_dir, 'data', 'colombiaID.geo.json')
 with open(json_path, encoding='utf-8') as json_file:
     departamentos = json.load(json_file)
+
+# -----------------
+# Team images
+
+alan = {"img": ""}
+david = {"img": ""}
+emilio = {"img": ""}
+ernesto = {"img": ""}
+juan_g = {"img": ""}
+juan_p = {"img": ""}
 
 
 # -----------------
@@ -415,14 +426,10 @@ app.layout = html.Div([
 
                     html.Div([
                         html.Label('Year', title='Select the year the test was performed'),
-                        html.Br(),
-                        dcc.Slider(
+                        dcc.Dropdown(
                             id='year-slider',
-                            min=2016,
-                            max=2019,
-                            value=2016,
-                            marks={str(year): str(year) for year in available_year},
-                            step=None
+                            options=[{'label': str(year), 'value': year} for year in available_year],
+                            value=available_year[0]
                         )
                     ],
                     className="mini_filter")
@@ -492,6 +499,14 @@ app.layout = html.Div([
                         "It is ploted with pie charts on the right for reference. "
                         "Hover on a color to see the factor and proportion on each module.",
                         className="mini_filter right-column auto_width flex-1"
+                    ),
+
+                    html.P(
+                        "Not all factors will produce noticeable changes!",
+                        className="mini_filter right-column auto_width flex-1",
+                        style={
+                            'font-weight': 'bold'
+                        }
                     )
                 ],
                 className="pretty_container four columns",
@@ -671,9 +686,109 @@ app.layout = html.Div([
         selected_style=tab_selected_style
         ),
 
-        dcc.Tab(label='About Team 18', children=[],
-        style=tab_style,
-        selected_style=tab_selected_style
+        dcc.Tab(
+            label='About Team 18', 
+            children= [
+                html.Div([
+                    html.Div(
+                        html.Div([
+                                # html.Img(src=app.get_asset_url(david["img"]), width='100%'),
+                                html.Div([
+                                        html.H2("David Bustos"),
+                                        html.P("Model Builder")
+                                    ],
+                                    className="team-container"
+                                )
+                            ],
+                            className="team-card"
+                        ),
+                        className="team-column"
+                    ),
+
+                    html.Div(
+                        html.Div([
+                                # html.Img(src=app.get_asset_url(emilio["img"]), width='100%'),
+                                html.Div([
+                                        html.H2("Emilio Berdugo"),
+                                        html.P("Model Builder")
+                                    ],
+                                    className="team-container"
+                                )
+                            ],
+                            className="team-card"
+                        ),
+                        className="team-column"
+                    ),
+
+                    html.Div(
+                        html.Div([
+                                # html.Img(src=app.get_asset_url(ernesto["img"]), width='100%'),
+                                html.Div([
+                                        html.H2("Ernesto Rocha"),
+                                        html.P("Model Builder")
+                                    ],
+                                    className="team-container"
+                                )
+                            ],
+                            className="team-card"
+                        ),
+                        className="team-column"
+                    )
+                    ],
+                    className="team-row"
+                ),
+
+                html.Div([
+                    html.Div(
+                        html.Div([
+                                # html.Img(src=app.get_asset_url(alan["img"]), width='100%'),
+                                html.Div([
+                                        html.H2("Alan Palacio"),
+                                        html.P("Model Builder")
+                                    ],
+                                    className="team-container"
+                                )
+                            ],
+                            className="team-card"
+                        ),
+                        className="team-column"
+                    ),
+
+                    html.Div(
+                        html.Div([
+                                # html.Img(src=app.get_asset_url(juan_g["img"]), width='100%'),
+                                html.Div([
+                                        html.H2("Juan González"),
+                                        html.P("Model Builder")
+                                    ],
+                                    className="team-container"
+                                )
+                            ],
+                            className="team-card"
+                        ),
+                        className="team-column"
+                    ),
+
+                    html.Div(
+                        html.Div([
+                                # html.Img(src=app.get_asset_url(juan_p["img"]), width='100%'),
+                                html.Div([
+                                        html.H2("Juan Pérez"),
+                                        html.P("Model Builder")
+                                    ],
+                                    className="team-container"
+                                )
+                            ],
+                            className="team-card"
+                        ),
+                        className="team-column"
+                    )
+                    ],
+                    className="team-row"
+                )
+            ],
+            style=tab_style,
+            selected_style=tab_selected_style
         )
     ],
     style=tabs_styles
