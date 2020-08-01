@@ -861,7 +861,7 @@ def get_box_plot(selected_test,selected_year, selected_mod, selected_factor):
     color=px.colors.qualitative.Plotly[:len(xs)]
 
     for mean, median, q1, q3, lowerfence, upperfence, y, name, x, color in zip(means, medians, q1s, q3s, lowerfences, upperfences, outliers, names, xs, color):
-        fig.add_trace(go.Box(mean=mean, median=median, q1=q1, q3=q3, lowerfence = lowerfence, upperfence = upperfence, boxpoints='all', name=name, x = x, orientation='v', marker_color=color))
+        fig.add_trace(go.Box(mean=mean, median=median, q1=q1, q3=q3, lowerfence = lowerfence, upperfence = upperfence, boxpoints='all', name=name[:30], x = x, orientation='v', marker_color=color))
         x_art=list(x)*len(y)
         fig.add_trace(go.Scatter(x=x_art,y=y, name=name, mode='markers', showlegend=False, marker_color=color))
     
