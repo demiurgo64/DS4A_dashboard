@@ -846,7 +846,16 @@ def get_box_plot(selected_test,selected_year, selected_mod, selected_factor):
 	
     print(names)
 
-    fig = go.Figure()
+    layout = go.Layout(
+        margin=go.layout.Margin(
+                l=10, #left margin
+                r=10, #right margin
+                b=5, #bottom margin
+                t=10  #top margin
+            )
+        )
+
+    fig = go.Figure(layout=layout)
 
     xs = np.reshape(names, (-1,1))
     color=px.colors.qualitative.Plotly[:len(xs)]
@@ -855,17 +864,16 @@ def get_box_plot(selected_test,selected_year, selected_mod, selected_factor):
         fig.add_trace(go.Box(mean=mean, median=median, q1=q1, q3=q3, lowerfence = lowerfence, upperfence = upperfence, boxpoints='all', name=name, x = x, orientation='v', marker_color=color))
         x_art=list(x)*len(y)
         fig.add_trace(go.Scatter(x=x_art,y=y, name=name, mode='markers', showlegend=False, marker_color=color))
-	
     
     fig.update_layout(
-        transition_duration=2,
+        transition_duration=1,
         legend=dict(
             orientation="h",
             yanchor="bottom",
             y=-0.4,
             xanchor="center",
             x=0.5,
-            title=""
+            #title=""
         )
     )
 
