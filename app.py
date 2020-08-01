@@ -887,8 +887,8 @@ def get_map(selected_test,selected_year, selected_mod):
     
     fig = px.choropleth_mapbox(map_df, geojson=departamentos, locations='estu_prgm_departamento', 
                                color=selected_mod, color_continuous_scale="Viridis",
-                               center={'lat':4.6683288,'lon':-74.1350578}, mapbox_style="carto-positron", 
-                               zoom=4, labels=dict(presentation_module, **presentation_column_short_names))
+                               center={'lat':4.3,'lon':-74.1}, mapbox_style="carto-positron", 
+                               zoom=4.2, labels=dict(presentation_module, **presentation_column_short_names))
 
     fig.update_layout(title="Colombia",margin={"r":0,"t":0,"l":0,"b":0}, paper_bgcolor="#F8F9F9", plot_bgcolor="#F8F9F9")
     return fig
