@@ -359,7 +359,7 @@ app.layout = html.Div([
         dcc.Tab(label=' Project Overview', children=[
 
             html.Br(),
-            html.Img(src=app.get_asset_url('student-test.jpg'), width='100%')
+            html.Img(src=app.get_asset_url('Datafolio.jpg'), width='100%')
             #html.H2(section_1_title),
             #html.P(section_1_p_1),
             #html.P(section_1_p_2),
@@ -744,7 +744,7 @@ app.layout = html.Div([
                                 # html.Img(src=app.get_asset_url(alan["img"]), width='100%'),
                                 html.Div([
                                         html.H2("Alan Palacio"),
-                                        html.P("Model Builder")
+                                        html.P("Application Builder")
                                     ],
                                     className="team-container"
                                 )
@@ -759,7 +759,7 @@ app.layout = html.Div([
                                 # html.Img(src=app.get_asset_url(juan_g["img"]), width='100%'),
                                 html.Div([
                                         html.H2("Juan González"),
-                                        html.P("Model Builder")
+                                        html.P("Application Builder")
                                     ],
                                     className="team-container"
                                 )
@@ -774,7 +774,7 @@ app.layout = html.Div([
                                 # html.Img(src=app.get_asset_url(juan_p["img"]), width='100%'),
                                 html.Div([
                                         html.H2("Juan Pérez"),
-                                        html.P("Model Builder")
+                                        html.P("Application Builder")
                                     ],
                                     className="team-container"
                                 )
