@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -846,26 +847,34 @@ def get_box_plot(selected_test,selected_year, selected_mod, selected_factor):
 	
     print(names)
 
-    fig = go.Figure()
+    layout = go.Layout(
+        margin=go.layout.Margin(
+                l=10, #left margin
+                r=10, #right margin
+                b=5, #bottom margin
+                t=10  #top margin
+            )
+        )
+
+    fig = go.Figure(layout=layout)
 
     xs = np.reshape(names, (-1,1))
     color=px.colors.qualitative.Plotly[:len(xs)]
 
     for mean, median, q1, q3, lowerfence, upperfence, y, name, x, color in zip(means, medians, q1s, q3s, lowerfences, upperfences, outliers, names, xs, color):
-        fig.add_trace(go.Box(mean=mean, median=median, q1=q1, q3=q3, lowerfence = lowerfence, upperfence = upperfence, boxpoints='all', name=name, x = x, orientation='v', marker_color=color))
+        fig.add_trace(go.Box(mean=mean, median=median, q1=q1, q3=q3, lowerfence = lowerfence, upperfence = upperfence, boxpoints='all', name=name[:30], x = x, orientation='v', marker_color=color))
         x_art=list(x)*len(y)
         fig.add_trace(go.Scatter(x=x_art,y=y, name=name, mode='markers', showlegend=False, marker_color=color))
-	
     
     fig.update_layout(
-        transition_duration=2,
+        transition_duration=1,
         legend=dict(
             orientation="h",
             yanchor="bottom",
             y=-0.4,
             xanchor="center",
             x=0.5,
-            title=""
+            #title=""
         )
     )
 
@@ -887,8 +896,8 @@ def get_map(selected_test,selected_year, selected_mod):
     
     fig = px.choropleth_mapbox(map_df, geojson=departamentos, locations='estu_prgm_departamento', 
                                color=selected_mod, color_continuous_scale="Viridis",
-                               center={'lat':4.6683288,'lon':-74.1350578}, mapbox_style="carto-positron", 
-                               zoom=4, labels=dict(presentation_module, **presentation_column_short_names))
+                               center={'lat':4.3,'lon':-74.1}, mapbox_style="carto-positron", 
+                               zoom=4.2, labels=dict(presentation_module, **presentation_column_short_names))
 
     fig.update_layout(title="Colombia",margin={"r":0,"t":0,"l":0,"b":0}, paper_bgcolor="#F8F9F9", plot_bgcolor="#F8F9F9")
     return fig
